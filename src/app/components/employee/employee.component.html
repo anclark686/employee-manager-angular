@@ -1,0 +1,75 @@
+<div>
+  <div class="container" id="main-container">
+    <div class="row">
+      
+      <div *ngFor="let employee of employees" class="col-md-6 col-xl-3">
+        <div class="card m-b-30">
+          <div class="card-body row">
+            <div class="col-6">
+              <div *ngIf="employee?.imageUrl; else noImage">
+                <img
+                src="{{ employee?.imageUrl }}"
+                alt=""
+                class="img-fluid rounded-circle w-60"
+              />
+              </div>
+                <ng-template #noImage>
+                  <img 
+                  src="../../../assets/user.png"
+                  alt=""
+                  class="img-fluid rounded-circle w-60">
+                </ng-template>
+            </div>
+            <div class="col-6 card-title align-self-center mb-0">
+              <h5>{{ employee?.name }}</h5>
+              <p class="m-0">{{ employee?.jobTitle }}</p>
+            </div>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <i class="fa fa-envelope float-right"></i>{{ employee?.email }}
+            </li>
+            <li class="list-group-item">
+              <i class="fa fa-phone float-right"></i>Phone :
+              {{ employee?.phone }}
+            </li>
+          </ul>
+          <!-- <div class="card-body">
+            <div class="float-right btn-group btn-group-sm">
+              <a class="btn btn-success tooltips" (click)="onUpdateClick(employee)" data-placement="top" data-original-title="Edit"><i class="fa fa-pencil"></i> </a>
+              <a class="btn btn-danger tooltips" (click)="onDeleteClick(employee)" data-placement="top" data-original-title="Delete"><i class="fa fa-times"></i></a>
+            </div>
+          </div>
+          
+        </div>
+
+        <button data-bs-toggle="modal" [attr.data-bs-target]="'#editModal' + employee.id">ssss</button>
+        <p> {{ employee.id }} </p>
+
+        <div class="modal fade" [id]="'editModal' + employee.id" aria-hidden="true" [attr.aria-labelledby]="'EditModalLabel' + employee.id" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" [id]="'EditModalLabel' + employee.id">Update Employee</h5>
+                <button type="button" class="btn-close" [attr.data-bs-target]="'#EmployeeModal' + employee.id" data-bs-toggle="modal" data-bs-dismiss="modal" [id]="'closeBtn' + employee.id"></button>
+              </div>
+              <div class="modal-body">
+                <app-employee-form (newFormEvent)="onUpdateEmloyee(departmentId, $event)" [employee]="employee"></app-employee-form>
+              </div>
+            </div>
+          </div>
+        </div>
+         -->
+      </div>
+    </div>
+    
+
+    <!-- Notification for no employees -->
+    <div *ngIf="employees?.length === 0" class="col-lg-12 col-md-12 col-xl-12">
+      <div class="alert alert-secondary" role="alert">
+        <h4 class="alert-heading">No Employees were found.</h4>
+      </div>
+    </div>
+  </div>
+</div>
+

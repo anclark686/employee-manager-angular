@@ -1,0 +1,269 @@
+<div>
+  <h1 class="main-header">Departments</h1>
+
+  <!-- Button trigger modal -->
+  <div class="btn-container">
+    <button
+    type="button"
+    class="btn btn-info"
+    data-bs-toggle="modal"
+    data-bs-target="#new-dept-modal"
+  >
+    Add new Department
+  </button>
+  </div>
+
+
+  <div class="dept-card-container">
+    <div class="card" style="width: 18rem" *ngFor="let dept of departments">
+      <!-- <img src="..." class="card-img-top" alt="..." /> -->
+      <div class="card-body">
+        <h5 class="card-title">{{ dept.name }}</h5>
+        <div class="modify-btns">
+          <button class="emoji-btn" (click)="onOpenModal(dept, 'update')" data-bs-toggle="modal" data-bs-target="#edit-dept-modal">✏️</button>
+          <button class="emoji-btn" (click)="onOpenModal(dept, 'delete')" data-bs-toggle="modal" data-bs-target="#delete-dept-modal">❌</button>
+        </div>
+        <div class="card-text">
+          <p><strong>Manager:</strong> {{ dept.manager }}</p>
+          <p><strong>Email:</strong> {{ dept.email }}</p>
+          <p><strong>No. of Employees:</strong> {{ dept.employees.length }}</p>
+        </div>
+        <div class="view-btn">
+          <button class="btn btn-info" data-bs-toggle="modal" [attr.data-bs-target]="'#EmployeeModal' + dept.id" (click)="passDeptInfo(dept)">View Employees</button>
+        </div>
+
+      </div>
+
+      <!-- Employee Modal -->
+      <div class="modal fade" [id]="'EmployeeModal' + dept.id" tabindex="-1" [attr.aria-labelledby]="'EmployeeModalLabel' + dept.id" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" [id]="'EmployeeModalLabel' + dept.id">{{ dept.name }} Employees</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="onModalClose()"></button>
+            </div>
+            <div class="modal-body">
+              <employee-container [departmentId]="departmentId" [employees]="employees" (updateEvent)="onUpdateEm($event)"></employee-container>
+            </div>
+            <div class="modal-footer" id="employee-modal-footer">
+              <div class="left-button">
+                <button class="btn btn-info" [attr.data-bs-target]="'#AddNewModal' + dept.id" data-bs-toggle="modal" data-bs-dismiss="modal" [id]="'AddNewBtn' + dept.id">Add new Employee</button>
+              </div>
+              <div class="right-button">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="onModalClose()">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Add Modal -->
+      <div class="modal fade" [id]="'AddNewModal' + dept.id" aria-hidden="true" [attr.aria-labelledby]="'AddModalLabel' + dept.id" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" [id]="'AddModalLabel' + dept.id">Add New Employee</h5>
+              <button type="button" class="btn-close" [attr.data-bs-target]="'#EmployeeModal' + dept.id" data-bs-toggle="modal" data-bs-dismiss="modal" [id]="'close' + dept.id"></button>
+            </div>
+            <div class="modal-body">
+              <app-employee-form (newFormEvent)="onFormSubmit(dept, $event)"></app-employee-form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+    </div>
+  </div>
+
+  <!-- Add Dept Modal -->
+  <div
+    class="modal fade"
+    id="new-dept-modal"
+    tabindex="-1"
+    aria-labelledby="newDeptModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="newDeptModalLabel">Add New Department</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form #addForm="ngForm">
+
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input
+                type="text"
+                ngModel
+                name="name"
+                class="form-control"
+                id="name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="manager">Manager</label>
+              <input
+                type="text"
+                ngModel
+                name="manager"
+                class="form-control"
+                id="manager"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                type="text"
+                ngModel
+                name="email"
+                class="form-control"
+                id="email"
+                required
+              />
+            </div>
+
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+            id="close-add-modal"
+          >
+            Close
+          </button>
+          <button type="button" class="btn btn-primary" (click)="onAddDepartment(addForm)">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update Dept Modal -->
+  <div
+    class="modal fade"
+    id="edit-dept-modal"
+    tabindex="-1"
+    aria-labelledby="editDeptModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editDeptModalLabel">Update Department</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form #editForm="ngForm">
+            <input type="hidden" ngModel="{{editDepartment?.id}}" name="id" class="form-control" id="id" >
+            <input type="hidden" ngModel="{{editDepartment?.deptCode}}" name="userCode" class="form-control" id="userCode" >
+
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input
+                type="text"
+                ngModel="{{ editDepartment?.name }}"
+                name="name"
+                class="form-control"
+                id="name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="manager">Manager</label>
+              <input
+                type="text"
+                ngModel="{{ editDepartment?.manager }}"
+                name="manager"
+                class="form-control"
+                id="manager"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                type="text"
+                ngModel="{{ editDepartment?.email }}"
+                name="email"
+                class="form-control"
+                id="email"
+                required
+              />
+            </div>
+
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+            id="close-edit-modal"
+          >
+            Close
+          </button>
+          <button type="button" class="btn btn-primary" (click)="onUpdateDepartment(editForm.value)">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Dept Modal -->
+  <div
+    class="modal fade"
+    id="delete-dept-modal"
+    tabindex="-1"
+    aria-labelledby="deleteDeptModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteDeptModalLabel">Delete Department</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete the {{deleteDepartment?.name}} department?</p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+            id="close-delete-modal"
+          >
+            Close
+          </button>
+          <button type="button" class="btn btn-danger" (click)="onDeleteDepartment(deleteDepartment.id)">Proceed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
